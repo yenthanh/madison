@@ -1,1 +1,69 @@
-<p>product-detail works!</p>
+<div class="container">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <p>Đang tải thông tin sản phẩm...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button (click)="goBack()" class="btn btn-primary">Quay lại</button>
+  </div>
+
+  <!-- Product Details -->
+  <div *ngIf="product && !loading" class="product-detail">
+    <div class="header">
+      <button (click)="goBack()" class="btn btn-secondary">← Quay lại</button>
+      <h1>{{ product.name }}</h1>
+    </div>
+
+    <div class="product-content">
+      <div class="product-info">
+        <div class="info-row">
+          <span class="label">Mô tả:</span>
+          <span class="value">{{ product.description }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Danh mục:</span>
+          <span class="value category-badge">{{ product.category }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Giá:</span>
+          <span class="value price">{{ product.price | currency:'VND' }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Trạng thái:</span>
+          <span class="value status-badge" [ngClass]="product.isActive ? 'active' : 'inactive'">
+            {{ product.isActive ? 'Hoạt động' : 'Không hoạt động' }}
+          </span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Loại thuốc:</span>
+          <span class="value status-badge" [ngClass]="product.isDangerousDrug ? 'dangerous' : 'normal'">
+            {{ product.isDangerousDrug ? 'Thuốc nguy hiểm' : 'Thuốc thường' }}
+          </span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Ngày tạo:</span>
+          <span class="value">{{ product.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        
+        <div class="info-row" *ngIf="product.updatedAt">
+          <span class="label">Cập nhật lần cuối:</span>
+          <span class="value">{{ product.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button (click)="updateDescription()" class="btn btn-primary">
+          Cập nhật mô tả
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
