@@ -16,11 +16,11 @@ namespace VeterinaryAPI.Controllers
         }
 
         /// <summary>
-        /// Lấy tất cả sản phẩm active và không bị xóa, có phân trang
+        /// Get all active products that are not deleted, with pagination
         /// </summary>
-        /// <param name="page">Số trang (mặc định: 1)</param>
-        /// <param name="pageSize">Số sản phẩm mỗi trang (mặc định: 20)</param>
-        /// <returns>Danh sách sản phẩm với thông tin phân trang</returns>
+        /// <param name="page">Page number (default: 1)</param>
+        /// <param name="pageSize">Number of products per page (default: 20)</param>
+        /// <returns>List of products with pagination information</returns>
         [HttpGet("active")]
         public async Task<ActionResult<ProductListResponse>> GetActiveProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
@@ -34,16 +34,16 @@ namespace VeterinaryAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Lỗi server: " + ex.Message });
+                return StatusCode(500, new { message = "Server error: " + ex.Message });
             }
         }
 
         /// <summary>
-        /// Lấy tất cả thuốc nguy hiểm, có phân trang
+        /// Get all dangerous drugs, with pagination
         /// </summary>
-        /// <param name="page">Số trang (mặc định: 1)</param>
-        /// <param name="pageSize">Số sản phẩm mỗi trang (mặc định: 20)</param>
-        /// <returns>Danh sách thuốc nguy hiểm với thông tin phân trang</returns>
+        /// <param name="page">Page number (default: 1)</param>
+        /// <param name="pageSize">Number of products per page (default: 20)</param>
+        /// <returns>List of dangerous drugs with pagination information</returns>
         [HttpGet("dangerous-drugs")]
         public async Task<ActionResult<ProductListResponse>> GetDangerousDrugs([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
@@ -57,15 +57,15 @@ namespace VeterinaryAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Lỗi server: " + ex.Message });
+                return StatusCode(500, new { message = "Server error: " + ex.Message });
             }
         }
 
         /// <summary>
-        /// Cập nhật mô tả sản phẩm
+        /// Update product description
         /// </summary>
-        /// <param name="updateDto">Thông tin cập nhật</param>
-        /// <returns>Thông báo thành công hoặc lỗi</returns>
+        /// <param name="updateDto">Update information</param>
+        /// <returns>Success or error message</returns>
         [HttpPut("update-description")]
         public async Task<ActionResult<object>> UpdateProductDescription([FromBody] UpdateProductDescriptionDto updateDto)
         {
@@ -73,31 +73,31 @@ namespace VeterinaryAPI.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(new { message = "Dữ liệu không hợp lệ", errors = ModelState });
+                    return BadRequest(new { message = "Invalid data", errors = ModelState });
                 }
 
                 var success = await _productService.UpdateProductDescriptionAsync(updateDto.ProductId, updateDto.Description);
                 
                 if (success)
                 {
-                    return Ok(new { message = "Cập nhật mô tả sản phẩm thành công" });
+                    return Ok(new { message = "Product description updated successfully" });
                 }
                 else
                 {
-                    return NotFound(new { message = "Không tìm thấy sản phẩm với ID: " + updateDto.ProductId });
+                    return NotFound(new { message = "Product not found with ID: " + updateDto.ProductId });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Lỗi server: " + ex.Message });
+                return StatusCode(500, new { message = "Server error: " + ex.Message });
             }
         }
 
         /// <summary>
-        /// Lấy sản phẩm theo ID
+        /// Get product by ID
         /// </summary>
-        /// <param name="id">ID sản phẩm</param>
-        /// <returns>Sản phẩm</returns>
+        /// <param name="id">Product ID</param>
+        /// <returns>Product</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
@@ -107,14 +107,14 @@ namespace VeterinaryAPI.Controllers
                 
                 if (product == null)
                 {
-                    return NotFound(new { message = "Không tìm thấy sản phẩm với ID: " + id });
+                    return NotFound(new { message = "Product not found with ID: " + id });
                 }
 
                 return Ok(product);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Lỗi server: " + ex.Message });
+                return StatusCode(500, new { message = "Server error: " + ex.Message });
             }
         }
     }

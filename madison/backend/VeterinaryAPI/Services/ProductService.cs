@@ -88,9 +88,9 @@ namespace VeterinaryAPI.Services
             return new ProductDto
             {
                 Id = product.ProductId,
-                Name = product.ProductCode ?? "Không có tên",
-                Description = product.ProductDescription ?? "Không có mô tả",
-                Category = "Thú y", // Có thể map từ bảng khác nếu cần
+                Name = product.ProductCode ?? "No name",
+                Description = product.ProductDescription ?? "No description",
+                Category = "Veterinary", // Can be mapped from another table if needed
                 Price = product.SupplierPrice ?? 0,
                 IsActive = product.InactiveDate == null,
                 IsDeleted = product.DeleteDate != null,
