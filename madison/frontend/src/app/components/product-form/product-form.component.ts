@@ -32,7 +32,7 @@ export class ProductFormComponent implements OnInit {
       if (id) {
         this.loadProduct(id);
       } else {
-        this.error = 'Không tìm thấy ID sản phẩm';
+        this.error = 'Product ID not found';
       }
     });
   }
@@ -48,7 +48,7 @@ export class ProductFormComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Lỗi khi tải thông tin sản phẩm: ' + error.message;
+        this.error = 'Error loading product information: ' + error.message;
         this.loading = false;
       }
     });
@@ -56,7 +56,7 @@ export class ProductFormComponent implements OnInit {
 
   onSubmit(): void {
     if (!this.product || !this.newDescription.trim()) {
-      this.error = 'Vui lòng nhập mô tả mới';
+      this.error = 'Please enter a new description';
       return;
     }
 
@@ -71,7 +71,7 @@ export class ProductFormComponent implements OnInit {
 
     this.productService.updateProductDescription(updateDto).subscribe({
       next: (response) => {
-        this.success = 'Cập nhật mô tả thành công!';
+        this.success = 'Description updated successfully!';
         this.submitting = false;
         
         // Redirect to product detail after 2 seconds
@@ -80,7 +80,7 @@ export class ProductFormComponent implements OnInit {
         }, 2000);
       },
       error: (error) => {
-        this.error = 'Lỗi khi cập nhật mô tả: ' + error.message;
+        this.error = 'Error updating description: ' + error.message;
         this.submitting = false;
       }
     });

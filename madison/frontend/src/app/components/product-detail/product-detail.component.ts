@@ -41,7 +41,7 @@ export class ProductDetailComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Lỗi khi tải thông tin sản phẩm: ' + error.message;
+        this.error = 'Error loading product information: ' + error.message;
         this.loading = false;
       }
     });

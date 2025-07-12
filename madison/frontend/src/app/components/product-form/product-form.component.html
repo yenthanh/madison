@@ -1,44 +1,44 @@
 <div class="container">
   <!-- Loading -->
   <div *ngIf="loading" class="loading">
-    <p>Đang tải thông tin sản phẩm...</p>
+    <p>Loading product information...</p>
   </div>
 
   <!-- Error -->
   <div *ngIf="error && !loading" class="error">
     <p>{{ error }}</p>
-    <button (click)="goBack()" class="btn btn-primary">Quay lại</button>
+    <button (click)="goBack()" class="btn btn-primary">Back</button>
   </div>
 
   <!-- Success -->
   <div *ngIf="success" class="success">
     <p>{{ success }}</p>
-    <p>Đang chuyển hướng...</p>
+    <p>Redirecting...</p>
   </div>
 
   <!-- Form -->
   <div *ngIf="product && !loading && !success" class="form-container">
     <div class="header">
-      <button (click)="goBack()" class="btn btn-secondary">← Quay lại</button>
-      <h1>Cập nhật mô tả sản phẩm</h1>
+      <button (click)="goBack()" class="btn btn-secondary">← Back</button>
+      <h1>Update Product Description</h1>
     </div>
 
     <div class="product-info">
       <h2>{{ product.name }}</h2>
       <p class="current-description">
-        <strong>Mô tả hiện tại:</strong> {{ product.description }}
+        <strong>Current Description:</strong> {{ product.description }}
       </p>
     </div>
 
     <form (ngSubmit)="onSubmit()" class="update-form">
       <div class="form-group">
-        <label for="description">Mô tả mới:</label>
+        <label for="description">New Description:</label>
         <textarea
           id="description"
           name="description"
           [(ngModel)]="newDescription"
           rows="4"
-          placeholder="Nhập mô tả mới cho sản phẩm..."
+          placeholder="Enter new description for the product..."
           required
           [disabled]="submitting"
         ></textarea>
@@ -51,15 +51,15 @@
           class="btn btn-secondary"
           [disabled]="submitting"
         >
-          Hủy
+          Cancel
         </button>
         <button 
           type="submit" 
           class="btn btn-primary"
           [disabled]="submitting || !newDescription.trim()"
         >
-          <span *ngIf="submitting">Đang cập nhật...</span>
-          <span *ngIf="!submitting">Cập nhật</span>
+          <span *ngIf="submitting">Updating...</span>
+          <span *ngIf="!submitting">Update</span>
         </button>
       </div>
     </form>

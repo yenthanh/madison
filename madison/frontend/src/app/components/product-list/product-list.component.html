@@ -1,9 +1,9 @@
 <div class="container">
-  <h1>Quản lý Sản phẩm Thú y</h1>
+  <h1>Veterinary Products Management</h1>
 
   <!-- Loading -->
   <div *ngIf="loading" class="loading">
-    <p>Đang tải dữ liệu...</p>
+    <p>Loading data...</p>
   </div>
 
   <!-- Error -->
@@ -13,13 +13,13 @@
 
   <!-- Active Products Section -->
   <section class="products-section">
-    <h2>Sản phẩm Active ({{ activeProductsTotalCount }} sản phẩm)</h2>
+    <h2>Active Products ({{ activeProductsTotalCount }} products)</h2>
     <div class="products-grid">
       <div *ngFor="let product of activeProducts" class="product-card" [ngClass]="getStatusClass(product)">
         <div class="product-header">
           <h3>{{ product.name }}</h3>
           <span class="status-badge" [ngClass]="getStatusClass(product)">
-            {{ product.isDangerousDrug ? 'Thuốc nguy hiểm' : 'Thường' }}
+            {{ product.isDangerousDrug ? 'Dangerous Drug' : 'Normal' }}
           </span>
         </div>
         <p class="description">{{ product.description }}</p>
@@ -28,8 +28,8 @@
           <span class="price">{{ product.price | currency:'VND' }}</span>
         </div>
         <div class="product-actions">
-          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Chi tiết</a>
-          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Cập nhật</a>
+          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Details</a>
+          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Update</a>
         </div>
       </div>
     </div>
@@ -37,15 +37,15 @@
     <!-- Pagination for Active Products -->
     <div *ngIf="activeProductsTotalPages > 1" class="pagination">
       <div class="pagination-info">
-        Trang {{ activeProductsPage }} / {{ activeProductsTotalPages }} 
-        ({{ activeProductsTotalCount }} sản phẩm)
+                  Page {{ activeProductsPage }} / {{ activeProductsTotalPages }} 
+        ({{ activeProductsTotalCount }} products)
       </div>
       <div class="pagination-controls">
         <button 
           (click)="loadActiveProductsPage(activeProductsPage - 1)" 
           [disabled]="activeProductsPage <= 1"
           class="btn btn-secondary">
-          ← Trước
+          ← Previous
         </button>
         
         <div class="page-numbers">
@@ -62,7 +62,7 @@
           (click)="loadActiveProductsPage(activeProductsPage + 1)" 
           [disabled]="activeProductsPage >= activeProductsTotalPages"
           class="btn btn-secondary">
-          Sau →
+          Next →
         </button>
       </div>
     </div>
@@ -70,12 +70,12 @@
 
   <!-- Dangerous Drugs Section -->
   <section class="products-section">
-    <h2>Thuốc Nguy hiểm ({{ dangerousDrugsTotalCount }} sản phẩm)</h2>
+    <h2>Dangerous Drugs ({{ dangerousDrugsTotalCount }} products)</h2>
     <div class="products-grid">
       <div *ngFor="let product of dangerousDrugs" class="product-card dangerous">
         <div class="product-header">
           <h3>{{ product.name }}</h3>
-          <span class="status-badge dangerous">Thuốc nguy hiểm</span>
+          <span class="status-badge dangerous">Dangerous Drug</span>
         </div>
         <p class="description">{{ product.description }}</p>
         <div class="product-details">
@@ -83,8 +83,8 @@
           <span class="price">{{ product.price | currency:'VND' }}</span>
         </div>
         <div class="product-actions">
-          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Chi tiết</a>
-          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Cập nhật</a>
+          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Details</a>
+          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Update</a>
         </div>
       </div>
     </div>
@@ -92,15 +92,15 @@
     <!-- Pagination for Dangerous Drugs -->
     <div *ngIf="dangerousDrugsTotalPages > 1" class="pagination">
       <div class="pagination-info">
-        Trang {{ dangerousDrugsPage }} / {{ dangerousDrugsTotalPages }} 
-        ({{ dangerousDrugsTotalCount }} sản phẩm)
+                  Page {{ dangerousDrugsPage }} / {{ dangerousDrugsTotalPages }} 
+        ({{ dangerousDrugsTotalCount }} products)
       </div>
       <div class="pagination-controls">
         <button 
           (click)="loadDangerousDrugsPage(dangerousDrugsPage - 1)" 
           [disabled]="dangerousDrugsPage <= 1"
           class="btn btn-secondary">
-          ← Trước
+          ← Previous
         </button>
         
         <div class="page-numbers">
@@ -117,7 +117,7 @@
           (click)="loadDangerousDrugsPage(dangerousDrugsPage + 1)" 
           [disabled]="dangerousDrugsPage >= dangerousDrugsTotalPages"
           class="btn btn-secondary">
-          Sau →
+          Next →
         </button>
       </div>
     </div>

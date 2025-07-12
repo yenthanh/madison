@@ -48,7 +48,7 @@ export class ProductListComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Lỗi khi tải danh sách sản phẩm: ' + error.message;
+        this.error = 'Error loading product list: ' + error.message;
         this.loading = false;
       }
     });
@@ -61,7 +61,7 @@ export class ProductListComponent implements OnInit {
         this.dangerousDrugsTotalPages = response.totalPages;
       },
       error: (error) => {
-        console.error('Lỗi khi tải thuốc nguy hiểm:', error);
+        console.error('Error loading dangerous drugs:', error);
       }
     });
   }
@@ -77,7 +77,7 @@ export class ProductListComponent implements OnInit {
           this.activeProductsTotalPages = response.totalPages;
         },
         error: (error) => {
-          this.error = 'Lỗi khi tải danh sách sản phẩm: ' + error.message;
+          this.error = 'Error loading product list: ' + error.message;
         }
       });
     }
@@ -94,7 +94,7 @@ export class ProductListComponent implements OnInit {
           this.dangerousDrugsTotalPages = response.totalPages;
         },
         error: (error) => {
-          console.error('Lỗi khi tải thuốc nguy hiểm:', error);
+          console.error('Error loading dangerous drugs:', error);
         }
       });
     }
