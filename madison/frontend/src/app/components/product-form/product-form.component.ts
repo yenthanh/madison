@@ -87,11 +87,8 @@ export class ProductFormComponent implements OnInit {
   }
 
   goBack(): void {
-    if (this.product) {
-      this.router.navigate(['/products', this.product.id]);
-    } else {
-      this.router.navigate(['/products']);
-    }
+    // Go back to previous page in browser history
+    window.history.back();
   }
 
   cancel(): void {
