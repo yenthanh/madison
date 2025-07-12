@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Veterinary API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px; padding: 10px; }
+        #result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Veterinary Products API Test</h1>
+    
+    <button onclick="getActiveProducts()">Get Active Products</button>
+    <button onclick="getDangerousDrugs()">Get Dangerous Drugs</button>
+    <button onclick="getProduct(1)">Get Product ID 1</button>
+    <button onclick="updateDescription()">Update Description</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:5042/api/products';
+        
+        async function getActiveProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/active`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<h3>Active Products:</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<h3>Error:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+        
+        async function getDangerousDrugs() {
+            try {
+                const response = await fetch(`${API_BASE}/dangerous-drugs`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<h3>Dangerous Drugs:</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<h3>Error:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+        
+        async function getProduct(id) {
+            try {
+                const response = await fetch(`${API_BASE}/${id}`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `<h3>Product ${id}:</h3><pre>` + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<h3>Error:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+        
+        async function updateDescription() {
+            try {
+                const response = await fetch(`${API_BASE}/update-description`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: 1,
+                        description: 'Updated description via API test'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<h3>Update Result:</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<h3>Error:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+    </script>
+</body>
+</html> 

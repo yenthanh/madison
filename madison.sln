@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "madison", "madison", "{30CEE5A7-93DF-92BE-D328-4D41D4F37DD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{4C176285-CB4C-91BF-00CF-E2FD384AEA21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeterinaryAPI", "madison\backend\VeterinaryAPI\VeterinaryAPI.csproj", "{7D25BD42-B124-2A86-11C7-8A9BDFB53BEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D25BD42-B124-2A86-11C7-8A9BDFB53BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D25BD42-B124-2A86-11C7-8A9BDFB53BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D25BD42-B124-2A86-11C7-8A9BDFB53BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D25BD42-B124-2A86-11C7-8A9BDFB53BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4C176285-CB4C-91BF-00CF-E2FD384AEA21} = {30CEE5A7-93DF-92BE-D328-4D41D4F37DD3}
+		{7D25BD42-B124-2A86-11C7-8A9BDFB53BEA} = {4C176285-CB4C-91BF-00CF-E2FD384AEA21}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7B9DC3A5-BAA8-47F5-8E5C-9AB8E1DFE4B9}
+	EndGlobalSection
+EndGlobal
