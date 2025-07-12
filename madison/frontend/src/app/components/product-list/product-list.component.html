@@ -1,0 +1,59 @@
+<div class="container">
+  <h1>Quản lý Sản phẩm Thú y</h1>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <p>Đang tải dữ liệu...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Active Products Section -->
+  <section class="products-section">
+    <h2>Sản phẩm Active</h2>
+    <div class="products-grid">
+      <div *ngFor="let product of activeProducts" class="product-card" [ngClass]="getStatusClass(product)">
+        <div class="product-header">
+          <h3>{{ product.name }}</h3>
+          <span class="status-badge" [ngClass]="getStatusClass(product)">
+            {{ product.isDangerousDrug ? 'Thuốc nguy hiểm' : 'Thường' }}
+          </span>
+        </div>
+        <p class="description">{{ product.description }}</p>
+        <div class="product-details">
+          <span class="category">{{ product.category }}</span>
+          <span class="price">{{ product.price | currency:'VND' }}</span>
+        </div>
+        <div class="product-actions">
+          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Chi tiết</a>
+          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Cập nhật</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dangerous Drugs Section -->
+  <section class="products-section">
+    <h2>Thuốc Nguy hiểm</h2>
+    <div class="products-grid">
+      <div *ngFor="let product of dangerousDrugs" class="product-card dangerous">
+        <div class="product-header">
+          <h3>{{ product.name }}</h3>
+          <span class="status-badge dangerous">Thuốc nguy hiểm</span>
+        </div>
+        <p class="description">{{ product.description }}</p>
+        <div class="product-details">
+          <span class="category">{{ product.category }}</span>
+          <span class="price">{{ product.price | currency:'VND' }}</span>
+        </div>
+        <div class="product-actions">
+          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Chi tiết</a>
+          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Cập nhật</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

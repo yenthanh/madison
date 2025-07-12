@@ -9,7 +9,10 @@ madison/
 ├── backend/                 # .NET Core 8 API
 │   ├── VeterinaryAPI/      # API project
 │   └── README.md           # Hướng dẫn backend
-├── frontend/               # Angular 18 (sẽ tạo)
+├── frontend/               # Angular 18 Frontend
+│   ├── src/               # Source code Angular
+│   ├── package.json       # Dependencies
+│   └── README.md          # Hướng dẫn frontend
 └── README.md              # File này
 ```
 
@@ -38,17 +41,31 @@ Truy cập: `http://localhost:5042/swagger`
 
 ## Frontend (Angular 18)
 
-*Sẽ được tạo tiếp theo*
+### Yêu cầu hệ thống
+- Node.js 18+
+- npm hoặc yarn
+
+### Chạy Frontend
+```bash
+cd frontend
+npm install
+ng serve
+```
+
+### Truy cập ứng dụng
+- Frontend: `http://localhost:4200`
+- Backend API: `http://localhost:5042`
 
 ## Tính năng
 
 - ✅ API .NET Core 8 với Swagger
+- ✅ Frontend Angular 18 responsive
 - ✅ Quản lý sản phẩm thú y
 - ✅ Lọc sản phẩm active/inactive
 - ✅ Lọc thuốc nguy hiểm
 - ✅ Cập nhật mô tả sản phẩm
 - ✅ CORS cấu hình cho Angular
-- 🔄 Frontend Angular 18 (đang phát triển)
+- ✅ Giao diện đẹp và modern
 
 ## Tác giả
 
