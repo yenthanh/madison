@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product.service';
+import { ProductCacheService } from '../../services/product-cache.service';
+import { ToastService } from '../../services/toast.service';
 import { Product, ProductListResponse } from '../../models/product';
 
 @Component({
@@ -12,131 +14,119 @@ import { Product, ProductListResponse } from '../../models/product';
   styleUrl: './product-list.component.css'
 })
 export class ProductListComponent implements OnInit {
-  activeProducts: Product[] = [];
-  dangerousDrugs: Product[] = [];
+  products: Product[] = [];
   loading = false;
   error = '';
+  currentPage = 1;
+  pageSize = 20;
+  totalItems = 0;
+  totalPages = 0;
+  activeTab = 'active'; // 'active' or 'dangerous'
+  Math = Math; // For template usage
 
-  // Pagination for active products
-  activeProductsPage = 1;
-  activeProductsPageSize = 20;
-  activeProductsTotalCount = 0;
-  activeProductsTotalPages = 0;
-
-  // Pagination for dangerous drugs
-  dangerousDrugsPage = 1;
-  dangerousDrugsPageSize = 20;
-  dangerousDrugsTotalCount = 0;
-  dangerousDrugsTotalPages = 0;
-
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private cacheService: ProductCacheService,
+    private toastService: ToastService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
+    this.checkForToastMessage();
+  }
+
+  private checkForToastMessage(): void {
+    this.route.queryParams.subscribe(params => {
+      const message = params['message'];
+      const type = params['type'];
+      
+      if (message && type) {
+        if (type === 'success') {
+          this.toastService.showSuccess(message);
+        } else if (type === 'error') {
+          this.toastService.showError(message);
+        }
+      }
+    });
   }
 
   loadProducts(): void {
     this.loading = true;
     this.error = '';
 
-    // Load active products
-    this.productService.getActiveProducts(this.activeProductsPage, this.activeProductsPageSize).subscribe({
-      next: (response: ProductListResponse) => {
-        this.activeProducts = response.products;
-        this.activeProductsTotalCount = response.totalCount;
-        this.activeProductsTotalPages = response.totalPages;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = 'Error loading product list: ' + error.message;
-        this.loading = false;
-      }
-    });
-
-    // Load dangerous drugs
-    this.productService.getDangerousDrugs(this.dangerousDrugsPage, this.dangerousDrugsPageSize).subscribe({
-      next: (response: ProductListResponse) => {
-        this.dangerousDrugs = response.products;
-        this.dangerousDrugsTotalCount = response.totalCount;
-        this.dangerousDrugsTotalPages = response.totalPages;
-      },
-      error: (error) => {
-        console.error('Error loading dangerous drugs:', error);
-      }
-    });
-  }
-
-  // Pagination methods for active products
-  loadActiveProductsPage(page: number): void {
-    if (page >= 1 && page <= this.activeProductsTotalPages) {
-      this.activeProductsPage = page;
-      this.productService.getActiveProducts(this.activeProductsPage, this.activeProductsPageSize).subscribe({
-        next: (response: ProductListResponse) => {
-          this.activeProducts = response.products;
-          this.activeProductsTotalCount = response.totalCount;
-          this.activeProductsTotalPages = response.totalPages;
-        },
-        error: (error) => {
-          this.error = 'Error loading product list: ' + error.message;
+    // Check cache first for active products
+    if (this.activeTab === 'active') {
+      this.cacheService.getProducts().subscribe(cachedData => {
+        if (cachedData && this.cacheService.isCacheValid()) {
+          this.displayProducts(cachedData);
+          this.loading = false;
+        } else {
+          this.fetchFromAPI();
         }
       });
-    }
-  }
-
-  // Pagination methods for dangerous drugs
-  loadDangerousDrugsPage(page: number): void {
-    if (page >= 1 && page <= this.dangerousDrugsTotalPages) {
-      this.dangerousDrugsPage = page;
-      this.productService.getDangerousDrugs(this.dangerousDrugsPage, this.dangerousDrugsPageSize).subscribe({
-        next: (response: ProductListResponse) => {
-          this.dangerousDrugs = response.products;
-          this.dangerousDrugsTotalCount = response.totalCount;
-          this.dangerousDrugsTotalPages = response.totalPages;
-        },
-        error: (error) => {
-          console.error('Error loading dangerous drugs:', error);
-        }
-      });
-    }
-  }
-
-  getStatusClass(product: Product): string {
-    if (product.isDangerousDrug) {
-      return 'dangerous';
-    }
-    return product.isActive ? 'active' : 'inactive';
-  }
-
-  // Helper methods for pagination
-  getActiveProductsPageNumbers(): number[] {
-    return this.getPageNumbers(this.activeProductsPage, this.activeProductsTotalPages);
-  }
-
-  getDangerousDrugsPageNumbers(): number[] {
-    return this.getPageNumbers(this.dangerousDrugsPage, this.dangerousDrugsTotalPages);
-  }
-
-  private getPageNumbers(currentPage: number, totalPages: number): number[] {
-    const pages: number[] = [];
-    const maxVisiblePages = 5;
-    
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
     } else {
-      let start = Math.max(1, currentPage - 2);
-      let end = Math.min(totalPages, start + maxVisiblePages - 1);
-      
-      if (end - start + 1 < maxVisiblePages) {
-        start = Math.max(1, end - maxVisiblePages + 1);
-      }
-      
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
+      this.fetchFromAPI();
     }
+  }
+
+  private fetchFromAPI(): void {
+    const observable = this.activeTab === 'active' 
+      ? this.productService.getActiveProducts(this.currentPage, this.pageSize)
+      : this.productService.getDangerousDrugs(this.currentPage, this.pageSize);
+
+    observable.subscribe({
+      next: (response: ProductListResponse) => {
+        this.displayProducts(response);
+        
+        // Cache the data if it's active products
+        if (this.activeTab === 'active') {
+          this.cacheService.setProducts(response);
+        }
+        
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = 'Error loading products: ' + error.message;
+        this.loading = false;
+      }
+    });
+  }
+
+  private displayProducts(response: ProductListResponse): void {
+    this.products = response.products;
+    this.totalItems = response.totalCount;
+    this.totalPages = response.totalPages;
+    this.currentPage = response.pageNumber;
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadProducts();
+  }
+
+  onTabChange(tab: string): void {
+    this.activeTab = tab;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(this.totalPages, this.currentPage + 2);
     
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
     return pages;
+  }
+
+  formatPrice(price: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+    }).format(price);
   }
 }

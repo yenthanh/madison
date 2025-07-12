@@ -50,10 +50,4 @@ export class ProductDetailComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/products']);
   }
-
-  updateDescription(): void {
-    if (this.product) {
-      this.router.navigate(['/update-description'], { queryParams: { id: this.product.id } });
-    }
-  }
 }

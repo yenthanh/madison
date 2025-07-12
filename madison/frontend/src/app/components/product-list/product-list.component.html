@@ -1,125 +1,105 @@
 <div class="container">
-  <h1>Veterinary Products Management</h1>
+  <div class="header">
+    <h1>Veterinary Products Management</h1>
+    <p>Manage and view veterinary products and dangerous drugs</p>
+  </div>
 
-  <!-- Loading -->
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'active'"
+      (click)="onTabChange('active')">
+      Active Products
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'dangerous'"
+      (click)="onTabChange('dangerous')">
+      Dangerous Drugs
+    </button>
+  </div>
+
+  <!-- Loading State -->
   <div *ngIf="loading" class="loading">
-    <p>Loading data...</p>
+    <div class="spinner"></div>
+    <p>Loading products...</p>
   </div>
 
-  <!-- Error -->
-  <div *ngIf="error" class="error">
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error">
     <p>{{ error }}</p>
+    <button (click)="loadProducts()" class="retry-button">Retry</button>
   </div>
 
-  <!-- Active Products Section -->
-  <section class="products-section">
-    <h2>Active Products ({{ activeProductsTotalCount }} products)</h2>
+  <!-- Products List -->
+  <div *ngIf="!loading && !error" class="products-container">
     <div class="products-grid">
-      <div *ngFor="let product of activeProducts" class="product-card" [ngClass]="getStatusClass(product)">
+      <div *ngFor="let product of products" class="product-card">
         <div class="product-header">
           <h3>{{ product.name }}</h3>
-          <span class="status-badge" [ngClass]="getStatusClass(product)">
-            {{ product.isDangerousDrug ? 'Dangerous Drug' : 'Normal' }}
-          </span>
-        </div>
-        <p class="description">{{ product.description }}</p>
-        <div class="product-details">
           <span class="category">{{ product.category }}</span>
-          <span class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</span>
         </div>
-        <div class="product-actions">
-          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Details</a>
-          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Update</a>
+        
+        <div class="product-body">
+          <p class="description">{{ product.description }}</p>
+          <div class="price">{{ formatPrice(product.price) }}</div>
+        </div>
+
+        <div class="product-footer">
+          <div class="status-badges">
+            <span *ngIf="product.isActive" class="badge active">Active</span>
+            <span *ngIf="product.isDangerousDrug" class="badge dangerous">Dangerous Drug</span>
+            <span *ngIf="!product.isActive" class="badge inactive">Inactive</span>
+          </div>
+          
+          <div class="actions">
+            <a [routerLink]="['/products', product.id]" class="btn btn-primary">
+              View Details
+            </a>
+            <a [routerLink]="['/products', product.id, 'edit']" 
+               class="btn btn-secondary">
+              Edit Description
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Pagination for Active Products -->
-    <div *ngIf="activeProductsTotalPages > 1" class="pagination">
-      <div class="pagination-info">
-                  Page {{ activeProductsPage }} / {{ activeProductsTotalPages }} 
-        ({{ activeProductsTotalCount }} products)
-      </div>
-      <div class="pagination-controls">
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="pagination">
+      <button 
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+        class="page-button">
+        Previous
+      </button>
+      
+      <div class="page-numbers">
         <button 
-          (click)="loadActiveProductsPage(activeProductsPage - 1)" 
-          [disabled]="activeProductsPage <= 1"
-          class="btn btn-secondary">
-          ← Previous
-        </button>
-        
-        <div class="page-numbers">
-          <button 
-            *ngFor="let page of getActiveProductsPageNumbers()"
-            (click)="loadActiveProductsPage(page)"
-            [class.active]="page === activeProductsPage"
-            class="page-btn">
-            {{ page }}
-          </button>
-        </div>
-        
-        <button 
-          (click)="loadActiveProductsPage(activeProductsPage + 1)" 
-          [disabled]="activeProductsPage >= activeProductsTotalPages"
-          class="btn btn-secondary">
-          Next →
+          *ngFor="let page of getPageNumbers()"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)"
+          class="page-number">
+          {{ page }}
         </button>
       </div>
-    </div>
-  </section>
-
-  <!-- Dangerous Drugs Section -->
-  <section class="products-section">
-    <h2>Dangerous Drugs ({{ dangerousDrugsTotalCount }} products)</h2>
-    <div class="products-grid">
-      <div *ngFor="let product of dangerousDrugs" class="product-card dangerous">
-        <div class="product-header">
-          <h3>{{ product.name }}</h3>
-          <span class="status-badge dangerous">Dangerous Drug</span>
-        </div>
-        <p class="description">{{ product.description }}</p>
-        <div class="product-details">
-          <span class="category">{{ product.category }}</span>
-          <span class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</span>
-        </div>
-        <div class="product-actions">
-          <a [routerLink]="['/products', product.id]" class="btn btn-primary">Details</a>
-          <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Update</a>
-        </div>
-      </div>
+      
+      <button 
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)"
+        class="page-button">
+        Next
+      </button>
     </div>
 
-    <!-- Pagination for Dangerous Drugs -->
-    <div *ngIf="dangerousDrugsTotalPages > 1" class="pagination">
-      <div class="pagination-info">
-                  Page {{ dangerousDrugsPage }} / {{ dangerousDrugsTotalPages }} 
-        ({{ dangerousDrugsTotalCount }} products)
-      </div>
-      <div class="pagination-controls">
-        <button 
-          (click)="loadDangerousDrugsPage(dangerousDrugsPage - 1)" 
-          [disabled]="dangerousDrugsPage <= 1"
-          class="btn btn-secondary">
-          ← Previous
-        </button>
-        
-        <div class="page-numbers">
-          <button 
-            *ngFor="let page of getDangerousDrugsPageNumbers()"
-            (click)="loadDangerousDrugsPage(page)"
-            [class.active]="page === dangerousDrugsPage"
-            class="page-btn">
-            {{ page }}
-          </button>
-        </div>
-        
-        <button 
-          (click)="loadDangerousDrugsPage(dangerousDrugsPage + 1)" 
-          [disabled]="dangerousDrugsPage >= dangerousDrugsTotalPages"
-          class="btn btn-secondary">
-          Next →
-        </button>
-      </div>
+    <!-- Results Info -->
+    <div class="results-info">
+      <p>
+        Showing {{ (currentPage - 1) * pageSize + 1 }} - 
+        {{ Math.min(currentPage * pageSize, totalItems) }} 
+        of {{ totalItems }} products
+      </p>
     </div>
-  </section>
+  </div>
 </div>

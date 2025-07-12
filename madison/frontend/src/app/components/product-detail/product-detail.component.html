@@ -60,9 +60,9 @@
       </div>
 
       <div class="actions">
-        <button (click)="updateDescription()" class="btn btn-primary">
+        <a [routerLink]="['/products', product.id, 'edit']" class="btn btn-primary">
           Update Description
-        </button>
+        </a>
       </div>
     </div>
   </div>

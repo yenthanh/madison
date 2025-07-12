@@ -27,7 +27,8 @@ export class ProductFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    // Get product ID from route params
+    this.route.params.subscribe(params => {
       const id = +params['id'];
       if (id) {
         this.loadProduct(id);
@@ -71,13 +72,21 @@ export class ProductFormComponent implements OnInit {
 
     this.productService.updateProductDescription(updateDto).subscribe({
       next: (response) => {
-        this.success = 'Description updated successfully!';
         this.submitting = false;
         
-        // Redirect to product detail after 2 seconds
-        setTimeout(() => {
-          this.router.navigate(['/products', this.product!.id]);
-        }, 2000);
+        // Update cache with new description
+        if (this.product) {
+          const updatedProduct = { ...this.product, description: this.newDescription.trim() };
+          this.productService.updateProductInCache(updatedProduct);
+        }
+        
+        // Redirect to product list immediately
+        this.router.navigate(['/products'], { 
+          queryParams: { 
+            message: 'Description updated successfully!',
+            type: 'success'
+          }
+        });
       },
       error: (error) => {
         this.error = 'Error updating description: ' + error.message;
@@ -87,8 +96,13 @@ export class ProductFormComponent implements OnInit {
   }
 
   goBack(): void {
-    // Go back to previous page in browser history
-    window.history.back();
+    // Check if we can go back in history
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Fallback to product list if no history
+      this.router.navigate(['/products']);
+    }
   }
 
   cancel(): void {
