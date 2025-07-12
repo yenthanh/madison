@@ -16,16 +16,21 @@ namespace VeterinaryAPI.Controllers
         }
 
         /// <summary>
-        /// Lấy tất cả sản phẩm active và không bị xóa, sắp xếp theo thời gian tạo mới nhất
+        /// Lấy tất cả sản phẩm active và không bị xóa, có phân trang
         /// </summary>
-        /// <returns>Danh sách sản phẩm</returns>
+        /// <param name="page">Số trang (mặc định: 1)</param>
+        /// <param name="pageSize">Số sản phẩm mỗi trang (mặc định: 20)</param>
+        /// <returns>Danh sách sản phẩm với thông tin phân trang</returns>
         [HttpGet("active")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetActiveProducts()
+        public async Task<ActionResult<ProductListResponse>> GetActiveProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             try
             {
-                var products = await _productService.GetAllActiveProductsAsync();
-                return Ok(products);
+                if (page < 1) page = 1;
+                if (pageSize < 1 || pageSize > 100) pageSize = 20;
+
+                var result = await _productService.GetAllActiveProductsAsync(page, pageSize);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -34,16 +39,21 @@ namespace VeterinaryAPI.Controllers
         }
 
         /// <summary>
-        /// Lấy tất cả thuốc nguy hiểm, loại trừ những sản phẩm đã xóa hoặc không active
+        /// Lấy tất cả thuốc nguy hiểm, có phân trang
         /// </summary>
-        /// <returns>Danh sách thuốc nguy hiểm</returns>
+        /// <param name="page">Số trang (mặc định: 1)</param>
+        /// <param name="pageSize">Số sản phẩm mỗi trang (mặc định: 20)</param>
+        /// <returns>Danh sách thuốc nguy hiểm với thông tin phân trang</returns>
         [HttpGet("dangerous-drugs")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetDangerousDrugs()
+        public async Task<ActionResult<ProductListResponse>> GetDangerousDrugs([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             try
             {
-                var products = await _productService.GetDangerousDrugsAsync();
-                return Ok(products);
+                if (page < 1) page = 1;
+                if (pageSize < 1 || pageSize > 100) pageSize = 20;
+
+                var result = await _productService.GetDangerousDrugsAsync(page, pageSize);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -89,7 +99,7 @@ namespace VeterinaryAPI.Controllers
         /// <param name="id">ID sản phẩm</param>
         /// <returns>Sản phẩm</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
             try
             {

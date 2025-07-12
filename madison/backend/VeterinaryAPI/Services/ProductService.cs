@@ -13,20 +13,56 @@ namespace VeterinaryAPI.Services
             _db = db;
         }
 
-        public async Task<IEnumerable<Product>> GetAllActiveProductsAsync()
+        public async Task<ProductListResponse> GetAllActiveProductsAsync(int pageNumber = 1, int pageSize = 20)
         {
-            return await _db.Products
-                .Where(p => p.DeleteDate == null && p.InactiveDate == null)
+            var query = _db.Products
+                .Where(p => p.DeleteDate == null && p.InactiveDate == null);
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var products = await query
                 .OrderByDescending(p => p.CreateDate)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            var productDtos = products.Select(MapToDto).ToList();
+
+            return new ProductListResponse
+            {
+                Products = productDtos,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
         }
 
-        public async Task<IEnumerable<Product>> GetDangerousDrugsAsync()
+        public async Task<ProductListResponse> GetDangerousDrugsAsync(int pageNumber = 1, int pageSize = 20)
         {
-            return await _db.Products
-                .Where(p => p.Dangerous == true && p.DeleteDate == null && p.InactiveDate == null)
+            var query = _db.Products
+                .Where(p => p.Dangerous == true && p.DeleteDate == null && p.InactiveDate == null);
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var products = await query
                 .OrderByDescending(p => p.CreateDate)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            var productDtos = products.Select(MapToDto).ToList();
+
+            return new ProductListResponse
+            {
+                Products = productDtos,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
         }
 
         public async Task<bool> UpdateProductDescriptionAsync(int productId, string description)
@@ -41,9 +77,27 @@ namespace VeterinaryAPI.Services
             return true;
         }
 
-        public async Task<Product?> GetProductByIdAsync(int productId)
+        public async Task<ProductDto?> GetProductByIdAsync(int productId)
         {
-            return await _db.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            var product = await _db.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            return product != null ? MapToDto(product) : null;
+        }
+
+        private static ProductDto MapToDto(Product product)
+        {
+            return new ProductDto
+            {
+                Id = product.ProductId,
+                Name = product.ProductCode ?? "Không có tên",
+                Description = product.ProductDescription ?? "Không có mô tả",
+                Category = "Thú y", // Có thể map từ bảng khác nếu cần
+                Price = product.SupplierPrice ?? 0,
+                IsActive = product.InactiveDate == null,
+                IsDeleted = product.DeleteDate != null,
+                IsDangerousDrug = product.Dangerous ?? false,
+                CreatedAt = product.CreateDate,
+                UpdatedAt = product.UpdateDate
+            };
         }
     }
 } 

@@ -4,9 +4,9 @@ namespace VeterinaryAPI.Services
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetAllActiveProductsAsync();
-        Task<IEnumerable<Product>> GetDangerousDrugsAsync();
+        Task<ProductListResponse> GetAllActiveProductsAsync(int pageNumber = 1, int pageSize = 20);
+        Task<ProductListResponse> GetDangerousDrugsAsync(int pageNumber = 1, int pageSize = 20);
         Task<bool> UpdateProductDescriptionAsync(int productId, string description);
-        Task<Product?> GetProductByIdAsync(int productId);
+        Task<ProductDto?> GetProductByIdAsync(int productId);
     }
 } 
