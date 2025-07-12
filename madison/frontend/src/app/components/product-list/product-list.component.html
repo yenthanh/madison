@@ -25,7 +25,7 @@
         <p class="description">{{ product.description }}</p>
         <div class="product-details">
           <span class="category">{{ product.category }}</span>
-          <span class="price">{{ product.price | currency:'VND' }}</span>
+          <span class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</span>
         </div>
         <div class="product-actions">
           <a [routerLink]="['/products', product.id]" class="btn btn-primary">Details</a>
@@ -80,7 +80,7 @@
         <p class="description">{{ product.description }}</p>
         <div class="product-details">
           <span class="category">{{ product.category }}</span>
-          <span class="price">{{ product.price | currency:'VND' }}</span>
+          <span class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</span>
         </div>
         <div class="product-actions">
           <a [routerLink]="['/products', product.id]" class="btn btn-primary">Details</a>
