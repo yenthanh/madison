@@ -154,3 +154,76 @@ h1 {
 .btn-secondary:hover {
   background-color: #f57c00;
 }
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Pagination Styles */
+.pagination {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.pagination-info {
+  margin-bottom: 15px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 5px;
+}
+
+.page-btn {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: white;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 40px;
+}
+
+.page-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.page-btn.active {
+  background-color: #2196f3;
+  color: white;
+  border-color: #2196f3;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .pagination-controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .page-numbers {
+    justify-content: center;
+  }
+}

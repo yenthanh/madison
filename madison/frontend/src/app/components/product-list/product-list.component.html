@@ -13,7 +13,7 @@
 
   <!-- Active Products Section -->
   <section class="products-section">
-    <h2>Sản phẩm Active</h2>
+    <h2>Sản phẩm Active ({{ activeProductsTotalCount }} sản phẩm)</h2>
     <div class="products-grid">
       <div *ngFor="let product of activeProducts" class="product-card" [ngClass]="getStatusClass(product)">
         <div class="product-header">
@@ -33,11 +33,44 @@
         </div>
       </div>
     </div>
+
+    <!-- Pagination for Active Products -->
+    <div *ngIf="activeProductsTotalPages > 1" class="pagination">
+      <div class="pagination-info">
+        Trang {{ activeProductsPage }} / {{ activeProductsTotalPages }} 
+        ({{ activeProductsTotalCount }} sản phẩm)
+      </div>
+      <div class="pagination-controls">
+        <button 
+          (click)="loadActiveProductsPage(activeProductsPage - 1)" 
+          [disabled]="activeProductsPage <= 1"
+          class="btn btn-secondary">
+          ← Trước
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            *ngFor="let page of getActiveProductsPageNumbers()"
+            (click)="loadActiveProductsPage(page)"
+            [class.active]="page === activeProductsPage"
+            class="page-btn">
+            {{ page }}
+          </button>
+        </div>
+        
+        <button 
+          (click)="loadActiveProductsPage(activeProductsPage + 1)" 
+          [disabled]="activeProductsPage >= activeProductsTotalPages"
+          class="btn btn-secondary">
+          Sau →
+        </button>
+      </div>
+    </div>
   </section>
 
   <!-- Dangerous Drugs Section -->
   <section class="products-section">
-    <h2>Thuốc Nguy hiểm</h2>
+    <h2>Thuốc Nguy hiểm ({{ dangerousDrugsTotalCount }} sản phẩm)</h2>
     <div class="products-grid">
       <div *ngFor="let product of dangerousDrugs" class="product-card dangerous">
         <div class="product-header">
@@ -53,6 +86,39 @@
           <a [routerLink]="['/products', product.id]" class="btn btn-primary">Chi tiết</a>
           <a [routerLink]="['/update-description']" [queryParams]="{id: product.id}" class="btn btn-secondary">Cập nhật</a>
         </div>
+      </div>
+    </div>
+
+    <!-- Pagination for Dangerous Drugs -->
+    <div *ngIf="dangerousDrugsTotalPages > 1" class="pagination">
+      <div class="pagination-info">
+        Trang {{ dangerousDrugsPage }} / {{ dangerousDrugsTotalPages }} 
+        ({{ dangerousDrugsTotalCount }} sản phẩm)
+      </div>
+      <div class="pagination-controls">
+        <button 
+          (click)="loadDangerousDrugsPage(dangerousDrugsPage - 1)" 
+          [disabled]="dangerousDrugsPage <= 1"
+          class="btn btn-secondary">
+          ← Trước
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            *ngFor="let page of getDangerousDrugsPageNumbers()"
+            (click)="loadDangerousDrugsPage(page)"
+            [class.active]="page === dangerousDrugsPage"
+            class="page-btn">
+            {{ page }}
+          </button>
+        </div>
+        
+        <button 
+          (click)="loadDangerousDrugsPage(dangerousDrugsPage + 1)" 
+          [disabled]="dangerousDrugsPage >= dangerousDrugsTotalPages"
+          class="btn btn-secondary">
+          Sau →
+        </button>
       </div>
     </div>
   </section>

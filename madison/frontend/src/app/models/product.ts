@@ -14,4 +14,12 @@ export interface Product {
 export interface UpdateProductDescriptionDto {
   productId: number;
   description: string;
+}
+
+export interface ProductListResponse {
+  products: Product[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
 } 
