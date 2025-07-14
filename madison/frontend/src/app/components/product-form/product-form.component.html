@@ -1,65 +1,51 @@
 <div class="container">
-  <!-- Loading -->
-  <div *ngIf="loading" class="loading">
-    <p>Loading product information...</p>
+  <div class="header">
+    <button (click)="goBack()" class="btn btn-secondary">← Back</button>
+    <h1>Update Product Description</h1>
   </div>
 
   <!-- Error -->
-  <div *ngIf="error && !loading" class="error">
+  <div *ngIf="error" class="error">
     <p>{{ error }}</p>
-    <button (click)="goBack()" class="btn btn-primary">Back</button>
   </div>
 
   <!-- Success -->
   <div *ngIf="success" class="success">
     <p>{{ success }}</p>
-    <p>Redirecting...</p>
   </div>
 
   <!-- Form -->
-  <div *ngIf="product && !loading && !success" class="form-container">
-    <div class="header">
-      <button (click)="goBack()" class="btn btn-secondary">← Back</button>
-      <h1>Update Product Description</h1>
-    </div>
-
+  <div class="form-container">
+    <!-- Product Info -->
     <div class="product-info">
-      <h2>{{ product.name }}</h2>
-      <p class="current-description">
-        <strong>Current Description:</strong> {{ product.description }}
-      </p>
+      <h3 *ngIf="product">{{ product.name }}</h3>
+      <h3 *ngIf="!product" class="placeholder">Loading product...</h3>
+      <p class="category" *ngIf="product">{{ product.category }}</p>
+      <p class="category placeholder" *ngIf="!product">Loading category...</p>
     </div>
 
-    <form (ngSubmit)="onSubmit()" class="update-form">
+    <!-- Description Form -->
+    <form (ngSubmit)="onSubmit()" class="description-form">
       <div class="form-group">
-        <label for="description">New Description:</label>
-        <textarea
+        <label for="description">Product Description:</label>
+        <textarea 
           id="description"
+          [(ngModel)]="newDescription" 
           name="description"
-          [(ngModel)]="newDescription"
-          rows="4"
-          placeholder="Enter new description for the product..."
-          required
+          rows="6"
+          placeholder="Enter new description..."
           [disabled]="submitting"
-        ></textarea>
+          required>
+        </textarea>
       </div>
 
       <div class="form-actions">
-        <button 
-          type="button" 
-          (click)="cancel()" 
-          class="btn btn-secondary"
-          [disabled]="submitting"
-        >
+        <button type="button" (click)="cancel()" class="btn btn-secondary" [disabled]="submitting">
           Cancel
         </button>
-        <button 
-          type="submit" 
-          class="btn btn-primary"
-          [disabled]="submitting || !newDescription.trim()"
-        >
+        <button type="submit" class="btn btn-primary" [disabled]="submitting || !newDescription.trim()">
           <span *ngIf="submitting">Updating...</span>
-          <span *ngIf="!submitting">Update</span>
+          <span *ngIf="!submitting">Update Description</span>
         </button>
       </div>
     </form>

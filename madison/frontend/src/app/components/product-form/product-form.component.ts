@@ -15,7 +15,6 @@ import { Product, UpdateProductDescriptionDto } from '../../models/product';
 export class ProductFormComponent implements OnInit {
   product: Product | null = null;
   newDescription: string = '';
-  loading = false;
   submitting = false;
   error = '';
   success = '';
@@ -39,18 +38,15 @@ export class ProductFormComponent implements OnInit {
   }
 
   loadProduct(id: number): void {
-    this.loading = true;
     this.error = '';
 
     this.productService.getProduct(id).subscribe({
       next: (product) => {
         this.product = product;
         this.newDescription = product.description;
-        this.loading = false;
       },
       error: (error) => {
         this.error = 'Error loading product information: ' + error.message;
-        this.loading = false;
       }
     });
   }
