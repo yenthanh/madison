@@ -1,6 +1,7 @@
-using VeterinaryAPI.Services;
-using VeterinaryAPI.Data;
-using Microsoft.EntityFrameworkCore;
+using VeterinaryAPI.Application.Interfaces;
+using VeterinaryAPI.Infrastructure.Data;
+using VeterinaryAPI.Infrastructure.Repositories;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,16 +14,19 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Veterinary Products API",
         Version = "v1",
-        Description = "API để quản lý sản phẩm thú y"
+        Description = "Enterprise-level API để quản lý sản phẩm thú y với Clean Architecture"
     });
 });
 
 // Register DbContext
-builder.Services.AddDbContext<MadisonDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register services
-builder.Services.AddScoped<IProductService, ProductService>();
+// Register MediatR
+builder.Services.AddMediatR(typeof(VeterinaryAPI.Application.UseCases.Queries.GetActiveProductsQuery).Assembly);
+
+// Register repositories
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Add CORS
 builder.Services.AddCors(options =>

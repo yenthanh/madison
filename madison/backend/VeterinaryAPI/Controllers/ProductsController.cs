@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using VeterinaryAPI.Models;
-using VeterinaryAPI.Services;
+using MediatR;
+using VeterinaryAPI.Application.DTOs;
+using VeterinaryAPI.Application.UseCases.Queries;
+using VeterinaryAPI.Application.UseCases.Commands;
 
 namespace VeterinaryAPI.Controllers
 {
@@ -8,11 +10,11 @@ namespace VeterinaryAPI.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductService _productService;
+        private readonly IMediator _mediator;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IMediator mediator)
         {
-            _productService = productService;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -29,7 +31,8 @@ namespace VeterinaryAPI.Controllers
                 if (page < 1) page = 1;
                 if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
-                var result = await _productService.GetAllActiveProductsAsync(page, pageSize);
+                var query = new GetActiveProductsQuery { PageNumber = page, PageSize = pageSize };
+                var result = await _mediator.Send(query);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -52,7 +55,8 @@ namespace VeterinaryAPI.Controllers
                 if (page < 1) page = 1;
                 if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
-                var result = await _productService.GetDangerousDrugsAsync(page, pageSize);
+                var query = new GetDangerousDrugsQuery { PageNumber = page, PageSize = pageSize };
+                var result = await _mediator.Send(query);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -76,7 +80,13 @@ namespace VeterinaryAPI.Controllers
                     return BadRequest(new { message = "Invalid data", errors = ModelState });
                 }
 
-                var success = await _productService.UpdateProductDescriptionAsync(updateDto.ProductId, updateDto.Description);
+                var command = new UpdateProductDescriptionCommand 
+                { 
+                    ProductId = updateDto.ProductId, 
+                    Description = updateDto.Description 
+                };
+                
+                var success = await _mediator.Send(command);
                 
                 if (success)
                 {
@@ -84,7 +94,7 @@ namespace VeterinaryAPI.Controllers
                 }
                 else
                 {
-                    return NotFound(new { message = "Product not found with ID: " + updateDto.ProductId });
+                    return NotFound(new { message = "Product not found or cannot be updated with ID: " + updateDto.ProductId });
                 }
             }
             catch (Exception ex)
@@ -103,13 +113,14 @@ namespace VeterinaryAPI.Controllers
         {
             try
             {
-                var product = await _productService.GetProductByIdAsync(id);
+                var query = new GetProductByIdQuery { ProductId = id };
+                var product = await _mediator.Send(query);
                 
                 if (product == null)
                 {
                     return NotFound(new { message = "Product not found with ID: " + id });
                 }
-
+                
                 return Ok(product);
             }
             catch (Exception ex)

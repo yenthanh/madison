@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using VeterinaryAPI.Models;
+using VeterinaryAPI.Domain.Entities;
 
-namespace VeterinaryAPI.Data
+namespace VeterinaryAPI.Infrastructure.Data
 {
-    public class MadisonDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public MadisonDbContext(DbContextOptions<MadisonDbContext> options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Product> Products { get; set; } = null!;
 
@@ -15,14 +15,9 @@ namespace VeterinaryAPI.Data
             {
                 entity.ToTable("Product");
                 entity.HasKey(e => e.ProductId);
+                
+                // Configure properties
                 entity.Property(e => e.ProductId).HasColumnName("ProductId");
-                entity.Property(e => e.CreateDate);
-                entity.Property(e => e.UpdateDate);
-                entity.Property(e => e.DeleteDate);
-                entity.Property(e => e.CreatedBy);
-                entity.Property(e => e.UpdatedBy);
-                entity.Property(e => e.InactiveDate);
-                entity.Property(e => e.OrganisationId);
                 entity.Property(e => e.ProductCode).HasMaxLength(50);
                 entity.Property(e => e.ProductDescription).HasMaxLength(200);
                 entity.Property(e => e.SupplierProductCode).HasMaxLength(50);
@@ -33,13 +28,13 @@ namespace VeterinaryAPI.Data
                 entity.Property(e => e.SoldInMarkup).HasColumnType("decimal(9,3)");
                 entity.Property(e => e.WholesaleDiscount).HasColumnType("decimal(9,2)");
                 entity.Property(e => e.ManufacturerDiscount).HasColumnType("decimal(9,2)");
-                entity.Property(e => e.UseWholesaleDiscount);
-                entity.Property(e => e.UseManufacturerDiscount);
-                entity.Property(e => e.Dangerous);
-                entity.Property(e => e.Neutering);
-                entity.Property(e => e.Euthanasia);
-                entity.Property(e => e.BookWithoutServiceFee);
-                entity.Property(e => e.PrescriptionOnly);
+
+                // Configure indexes
+                entity.HasIndex(e => e.ProductCode);
+                entity.HasIndex(e => e.CreateDate);
+                entity.HasIndex(e => e.DeleteDate);
+                entity.HasIndex(e => e.InactiveDate);
+                entity.HasIndex(e => e.Dangerous);
             });
         }
     }

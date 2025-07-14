@@ -1,6 +1,4 @@
-using System;
-
-namespace VeterinaryAPI.Models
+namespace VeterinaryAPI.Application.DTOs
 {
     public class ProductDto
     {
@@ -23,5 +21,20 @@ namespace VeterinaryAPI.Models
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public int TotalPages { get; set; }
+    }
+
+    public class UpdateProductDescriptionDto
+    {
+        public int ProductId { get; set; }
+        public string Description { get; set; } = string.Empty;
+    }
+
+    public class CreateProductDto
+    {
+        public string ProductCode { get; set; } = string.Empty;
+        public string ProductDescription { get; set; } = string.Empty;
+        public decimal SupplierPrice { get; set; }
+        public int OrganisationId { get; set; }
+        public bool IsDangerous { get; set; }
     }
 } 
