@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { ProductCacheService } from '../../services/product-cache.service';
 import { ToastService } from '../../services/toast.service';
+import { ProductModalComponent } from '../product-modal/product-modal.component';
 import { Product, ProductListResponse } from '../../models/product';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ProductModalComponent],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
 })
@@ -23,12 +24,17 @@ export class ProductListComponent implements OnInit {
   totalPages = 0;
   activeTab = 'active'; // 'active' or 'dangerous'
   Math = Math; // For template usage
+  
+  // Modal state
+  showModal = false;
+  selectedProduct: Product | null = null;
 
   constructor(
     private productService: ProductService,
     private cacheService: ProductCacheService,
     private toastService: ToastService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -128,5 +134,21 @@ export class ProductListComponent implements OnInit {
       currency: 'USD',
       minimumFractionDigits: 2
     }).format(price);
+  }
+
+  // Modal methods
+  openProductModal(product: Product): void {
+    this.selectedProduct = product;
+    this.showModal = true;
+  }
+
+  closeProductModal(): void {
+    this.showModal = false;
+    this.selectedProduct = null;
+  }
+
+  editProductFromModal(product: Product): void {
+    this.closeProductModal();
+    this.router.navigate(['/products', product.id, 'edit']);
   }
 }

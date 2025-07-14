@@ -54,9 +54,9 @@
           </div>
           
           <div class="actions">
-            <a [routerLink]="['/products', product.id]" class="btn btn-primary">
+            <button (click)="openProductModal(product)" class="btn btn-primary">
               View Details
-            </a>
+            </button>
             <a [routerLink]="['/products', product.id, 'edit']" 
                class="btn btn-secondary">
               Edit Description
@@ -102,4 +102,12 @@
       </p>
     </div>
   </div>
+
+  <!-- Product Modal -->
+  <app-product-modal 
+    *ngIf="showModal"
+    [product]="selectedProduct"
+    (close)="closeProductModal()"
+    (edit)="editProductFromModal($event)">
+  </app-product-modal>
 </div>
