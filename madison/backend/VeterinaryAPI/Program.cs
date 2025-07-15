@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Veterinary Products API",
         Version = "v1",
-        Description = "Enterprise-level API để quản lý sản phẩm thú y với Clean Architecture"
+        Description = "Enterprise-level API for veterinary products management with Clean Architecture"
     });
 });
 
