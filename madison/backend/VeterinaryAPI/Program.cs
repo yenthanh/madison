@@ -2,6 +2,7 @@ using VeterinaryAPI.Application.Interfaces;
 using VeterinaryAPI.Infrastructure.Data;
 using VeterinaryAPI.Infrastructure.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
