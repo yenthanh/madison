@@ -3,6 +3,8 @@ using MediatR;
 using VeterinaryAPI.Application.DTOs;
 using VeterinaryAPI.Application.UseCases.Queries;
 using VeterinaryAPI.Application.UseCases.Commands;
+using VeterinaryAPI.Application.Interfaces;
+
 
 namespace VeterinaryAPI.Controllers
 {
@@ -11,27 +13,39 @@ namespace VeterinaryAPI.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IProductRepository _productRepository;
 
-        public ProductsController(IMediator mediator)
+        public ProductsController(IMediator mediator, IProductRepository productRepository)
         {
             _mediator = mediator;
+            _productRepository = productRepository;
         }
 
         /// <summary>
-        /// Get all active products that are not deleted, with pagination
+        /// Get all active products with advanced filtering, searching and sorting
         /// </summary>
         /// <param name="page">Page number (default: 1)</param>
         /// <param name="pageSize">Number of products per page (default: 20)</param>
+        /// <param name="searchTerm">Search term for name, description, or category</param>
+        /// <param name="category">Filter by category</param>
+        /// <param name="sortBy">Sort by field (name, price, category, createdAt)</param>
+        /// <param name="sortOrder">Sort order (asc, desc)</param>
         /// <returns>List of products with pagination information</returns>
         [HttpGet("active")]
-        public async Task<ActionResult<ProductListResponse>> GetActiveProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<ActionResult<ProductListResponse>> GetActiveProducts(
+            [FromQuery] int page = 1, 
+            [FromQuery] int pageSize = 20)
         {
             try
             {
                 if (page < 1) page = 1;
                 if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
-                var query = new GetActiveProductsQuery { PageNumber = page, PageSize = pageSize };
+                var query = new GetActiveProductsQuery 
+                { 
+                    PageNumber = page, 
+                    PageSize = pageSize
+                };
                 var result = await _mediator.Send(query);
                 return Ok(result);
             }
@@ -42,20 +56,30 @@ namespace VeterinaryAPI.Controllers
         }
 
         /// <summary>
-        /// Get all dangerous drugs, with pagination
+        /// Get all dangerous drugs with advanced filtering, searching and sorting
         /// </summary>
         /// <param name="page">Page number (default: 1)</param>
         /// <param name="pageSize">Number of products per page (default: 20)</param>
+        /// <param name="searchTerm">Search term for name, description, or category</param>
+        /// <param name="category">Filter by category</param>
+        /// <param name="sortBy">Sort by field (name, price, category, createdAt)</param>
+        /// <param name="sortOrder">Sort order (asc, desc)</param>
         /// <returns>List of dangerous drugs with pagination information</returns>
         [HttpGet("dangerous-drugs")]
-        public async Task<ActionResult<ProductListResponse>> GetDangerousDrugs([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<ActionResult<ProductListResponse>> GetDangerousDrugs(
+            [FromQuery] int page = 1, 
+            [FromQuery] int pageSize = 20)
         {
             try
             {
                 if (page < 1) page = 1;
                 if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
-                var query = new GetDangerousDrugsQuery { PageNumber = page, PageSize = pageSize };
+                var query = new GetDangerousDrugsQuery 
+                { 
+                    PageNumber = page, 
+                    PageSize = pageSize
+                };
                 var result = await _mediator.Send(query);
                 return Ok(result);
             }

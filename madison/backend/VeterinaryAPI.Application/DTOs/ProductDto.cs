@@ -10,8 +10,8 @@ namespace VeterinaryAPI.Application.DTOs
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsDangerousDrug { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public string CreatedAt { get; set; } = string.Empty;
+        public string? UpdatedAt { get; set; }
     }
 
     public class ProductListResponse
