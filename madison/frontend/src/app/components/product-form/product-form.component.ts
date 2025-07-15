@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { Product, UpdateProductDescriptionDto } from '../../models/product';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-form',
@@ -12,12 +13,13 @@ import { Product, UpdateProductDescriptionDto } from '../../models/product';
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.css'
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, OnDestroy {
   product: Product | null = null;
   newDescription: string = '';
   submitting = false;
   error = '';
   success = '';
+  private routeSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,7 +29,7 @@ export class ProductFormComponent implements OnInit {
 
   ngOnInit(): void {
     // Get product ID from route params
-    this.route.params.subscribe(params => {
+    this.routeSubscription = this.route.params.subscribe(params => {
       const id = +params['id'];
       if (id) {
         this.loadProduct(id);
@@ -35,6 +37,12 @@ export class ProductFormComponent implements OnInit {
         this.error = 'Product ID not found';
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
   }
 
   loadProduct(id: number): void {
@@ -92,16 +100,12 @@ export class ProductFormComponent implements OnInit {
   }
 
   goBack(): void {
-    // Check if we can go back in history
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      // Fallback to product list if no history
-      this.router.navigate(['/products']);
-    }
+    // Navigate back to products list without any query params
+    this.router.navigate(['/products']);
   }
 
   cancel(): void {
-    this.goBack();
+    // Navigate back to products list without any query params
+    this.router.navigate(['/products']);
   }
 }

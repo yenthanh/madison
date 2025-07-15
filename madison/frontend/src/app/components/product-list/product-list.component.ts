@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
@@ -14,7 +14,7 @@ import { Product, ProductListResponse } from '../../models/product';
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   loading = false;
   error = '';
@@ -42,6 +42,14 @@ export class ProductListComponent implements OnInit {
     this.checkForToastMessage();
   }
 
+  ngOnDestroy(): void {
+    // Clear any query params when leaving the component
+    this.router.navigate([], {
+      queryParams: {},
+      replaceUrl: true
+    });
+  }
+
   private checkForToastMessage(): void {
     this.route.queryParams.subscribe(params => {
       const message = params['message'];
@@ -53,6 +61,12 @@ export class ProductListComponent implements OnInit {
         } else if (type === 'error') {
           this.toastService.showError(message);
         }
+        
+        // Clear the query params after showing the toast
+        this.router.navigate([], {
+          queryParams: {},
+          replaceUrl: true
+        });
       }
     });
   }
