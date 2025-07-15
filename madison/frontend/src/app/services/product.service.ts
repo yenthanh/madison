@@ -16,53 +16,68 @@ export class ProductService {
   ) { }
 
   getActiveProducts(page: number = 1, pageSize: number = 20): Observable<ProductListResponse> {
-    // Check cache first
-    if (this.cacheService.isCacheValid()) {
-      const cachedData = this.cacheService.getProducts();
-      return cachedData.pipe(
-        switchMap(data => {
-          if (data) {
-            return of(data);
-          }
-          return this.fetchActiveProducts(page, pageSize);
-        })
-      );
-    }
-    
+    // Always fetch from API for now, cache will be handled in fetchActiveProducts
     return this.fetchActiveProducts(page, pageSize);
+  }
+
+  getDangerousDrugs(page: number = 1, pageSize: number = 20): Observable<ProductListResponse> {
+    // Always fetch from API for now, cache will be handled in fetchDangerousDrugs
+    return this.fetchDangerousDrugs(page, pageSize);
   }
 
   private fetchActiveProducts(page: number, pageSize: number): Observable<ProductListResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
-    
-    return this.http.get<ProductListResponse>(`${this.apiUrl}/active`, { params });
+
+    return this.http.get<ProductListResponse>(`${this.apiUrl}/active`, { params }).pipe(
+      switchMap(data => {
+        // Only cache page 1
+        if (page === 1) {
+          console.log('Caching active products page 1');
+          this.cacheService.setActiveProducts(data);
+        }
+        return of(data);
+      })
+    );
   }
 
-  getDangerousDrugs(page: number = 1, pageSize: number = 20): Observable<ProductListResponse> {
+  private fetchDangerousDrugs(page: number, pageSize: number): Observable<ProductListResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
-    
-    return this.http.get<ProductListResponse>(`${this.apiUrl}/dangerous-drugs`, { params });
+
+    return this.http.get<ProductListResponse>(`${this.apiUrl}/dangerous-drugs`, { params }).pipe(
+      switchMap(data => {
+        // Only cache page 1
+        if (page === 1) {
+          console.log('Caching dangerous drugs page 1');
+          this.cacheService.setDangerousDrugs(data);
+        }
+        return of(data);
+      })
+    );
   }
 
   getProduct(id: number): Observable<Product> {
-    // Check cache first
+    // Check detail cache first
     const cachedProduct = this.cacheService.getProductDetail(id);
     if (cachedProduct) {
       return of(cachedProduct);
     }
-    
-    return this.http.get<Product>(`${this.apiUrl}/${id}`);
+
+    return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(
+      switchMap(product => {
+        this.cacheService.setProductDetail(product);
+        return of(product);
+      })
+    );
   }
 
   updateProductDescription(updateDto: UpdateProductDescriptionDto): Observable<any> {
     return this.http.put(`${this.apiUrl}/update-description`, updateDto);
   }
 
-  // Method to update cache after successful update
   updateProductInCache(updatedProduct: Product): void {
     this.cacheService.updateProductInCache(updatedProduct);
   }

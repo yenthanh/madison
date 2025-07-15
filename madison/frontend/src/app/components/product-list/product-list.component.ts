@@ -61,19 +61,8 @@ export class ProductListComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    // Check cache first for active products
-    if (this.activeTab === 'active') {
-      this.cacheService.getProducts().subscribe(cachedData => {
-        if (cachedData && this.cacheService.isCacheValid()) {
-          this.displayProducts(cachedData);
-          this.loading = false;
-        } else {
-          this.fetchFromAPI();
-        }
-      });
-    } else {
-      this.fetchFromAPI();
-    }
+    // Use cache for page 1, always fetch API for other pages
+    this.fetchFromAPI();
   }
 
   private fetchFromAPI(): void {
@@ -84,12 +73,6 @@ export class ProductListComponent implements OnInit {
     observable.subscribe({
       next: (response: ProductListResponse) => {
         this.displayProducts(response);
-        
-        // Cache the data if it's active products
-        if (this.activeTab === 'active') {
-          this.cacheService.setProducts(response);
-        }
-        
         this.loading = false;
       },
       error: (error) => {
@@ -113,7 +96,7 @@ export class ProductListComponent implements OnInit {
 
   onTabChange(tab: string): void {
     this.activeTab = tab;
-    this.currentPage = 1;
+    this.currentPage = 1; // Reset to page 1 when changing tab
     this.loadProducts();
   }
 
